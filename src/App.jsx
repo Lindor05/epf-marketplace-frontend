@@ -1,122 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
+import AdminRoute  from './components/AdminRoute';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages publiques
+import Home          from './pages/Home';
+import Login         from './pages/Login';
+import Register      from './pages/Register';
+import ProductDetail from './pages/ProductDetail';
+import Forbidden     from './components/Forbidden';
 
+// Profil
+import Profile from './pages/Profile';
+
+// Seller
+import SellerDashboard from './pages/seller/SellerDashboard';
+import MyProducts      from './pages/seller/MyProducts';
+import AddProduct      from './pages/seller/AddProduct';
+import EditProduct     from './pages/seller/EditProduct';
+import SellerOrders    from './pages/seller/SellerOrders';
+
+// Admin
+import AdminStats    from './pages/admin/AdminStats';
+import AdminUsers    from './pages/admin/AdminUsers';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminCoupons  from './pages/admin/AdminCoupons';
+
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <AuthProvider>
+        <Toaster position='top-right' />
+        <Routes>
 
-      <div className="ticks"></div>
+          {/* Public */}
+          <Route path='/'            element={<Home />} />
+          <Route path='/login'       element={<Login />} />
+          <Route path='/register'    element={<Register />} />
+          <Route path='/products/:id' element={<ProductDetail />} />
+          <Route path='/403'         element={<Forbidden />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          {/* Prive */}
+          <Route path='/profile' element={
+            <PrivateRoute><Profile /></PrivateRoute>
+          } />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          {/* Seller */}
+          <Route path='/seller' element={
+            <PrivateRoute><SellerDashboard /></PrivateRoute>
+          } />
+          <Route path='/seller/products' element={
+            <PrivateRoute><MyProducts /></PrivateRoute>
+          } />
+          <Route path='/seller/products/new' element={
+            <PrivateRoute><AddProduct /></PrivateRoute>
+          } />
+          <Route path='/seller/products/:id/edit' element={
+            <PrivateRoute><EditProduct /></PrivateRoute>
+          } />
+          <Route path='/seller/orders' element={
+            <PrivateRoute><SellerOrders /></PrivateRoute>
+          } />
+
+          {/* Admin - role === 'admin' uniquement */}
+          <Route path='/admin' element={
+            <AdminRoute><AdminStats /></AdminRoute>
+          } />
+          <Route path='/admin/users' element={
+            <AdminRoute><AdminUsers /></AdminRoute>
+          } />
+          <Route path='/admin/products' element={
+            <AdminRoute><AdminProducts /></AdminRoute>
+          } />
+          <Route path='/admin/coupons' element={
+            <AdminRoute><AdminCoupons /></AdminRoute>
+          } />
+
+        </Routes>
+        </AuthProvider>
+    </BrowserRouter>
+  );
 }
-
-export default App
