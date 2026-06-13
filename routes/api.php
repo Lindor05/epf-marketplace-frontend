@@ -27,6 +27,7 @@ Route::get('categories/{category}', [CategoryController::class, 'show']);
 
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/top-selling', [ProductController::class, 'topSelling']);
+Route::get('products/my-products', [ProductController::class, 'myProducts'])->middleware(['auth:sanctum', 'not_suspended']);
 Route::get('products/{product}/reviews', [ReviewController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
 
@@ -44,7 +45,6 @@ Route::middleware(['auth:sanctum', 'not_suspended'])->group(function (): void {
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::put('auth/profile', [AuthController::class, 'updateProfile']);
 
-    Route::get('products/my-products', [ProductController::class, 'myProducts']);
     Route::get('products/{product}/is-favorite', [ProductController::class, 'isFavorite']);
     Route::post('products/{product}/reviews', [ReviewController::class, 'store']);
 
