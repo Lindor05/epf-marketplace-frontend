@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute  from './components/AdminRoute';
+import Layout from './components/Layout'
 
 // Pages publiques
 import Home          from './pages/Home';
@@ -10,6 +11,12 @@ import Login         from './pages/Login';
 import Register      from './pages/Register';
 import ProductDetail from './pages/ProductDetail';
 import Forbidden     from './components/Forbidden';
+
+// Pages privées
+import Orders      from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
+import Favorites   from './pages/Favorites'
+import Messages    from './pages/Messages'
 
 // Profil
 import Profile from './pages/Profile';
@@ -27,11 +34,19 @@ import AdminUsers    from './pages/admin/AdminUsers';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminCoupons  from './pages/admin/AdminCoupons';
 
+// Category
+import CategoryList from './pages/CategoryList'
+
+//Cart
+import { CartProvider } from './contexts/CartContext'
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <CartProvider>
         <Toaster position='top-right' />
+        <Layout>
         <Routes>
 
           {/* Public */}
@@ -77,7 +92,26 @@ export default function App() {
             <AdminRoute><AdminCoupons /></AdminRoute>
           } />
 
+          {/*Category*/}
+          <Route path='/categories' element={<CategoryList />} />
+
+
+          <Route path='/orders' element={
+            <PrivateRoute><Orders /></PrivateRoute>
+          } />
+          <Route path='/orders/:id' element={
+            <PrivateRoute><OrderDetail /></PrivateRoute>
+          } />
+          <Route path='/favorites' element={
+            <PrivateRoute><Favorites /></PrivateRoute>
+          } />
+          <Route path='/messages' element={
+            <PrivateRoute><Messages /></PrivateRoute>
+          } />
+          
         </Routes>
+        </Layout>
+        </CartProvider>
         </AuthProvider>
     </BrowserRouter>
   );
