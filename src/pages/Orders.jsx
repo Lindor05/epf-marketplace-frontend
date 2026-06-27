@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getMyOrders } from '../services/order.service'
-import Spinner from '../components/Spinner'
 import ListSkeleton from '../components/ListSkeleton'
 
 const STATUS_COLORS = {
@@ -61,14 +60,14 @@ export default function Orders() {
 
             <div className="flex items-center justify-between text-sm text-gray-500">
               <span>{new Date(order.created_at).toLocaleDateString('fr-FR')}</span>
-              <span className="font-bold text-indigo-600">{order.total_price} €</span>
+              <span className="font-bold text-indigo-600">{order.total_amount} FCFA</span>
             </div>
 
             {order.items?.length > 0 && (
               <div className="mt-3 flex gap-2 flex-wrap">
                 {order.items.map(item => (
                   <span key={item.id} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                    {item.product?.name} x{item.quantity}
+                    {item.product?.title ?? item.product?.name} x{item.quantity}
                   </span>
                 ))}
               </div>

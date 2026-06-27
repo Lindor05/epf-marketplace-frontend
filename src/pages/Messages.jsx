@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getConversations, getMessages, sendMessage } from '../services/message.service'
 import Spinner from '../components/Spinner'
 import toast from 'react-hot-toast'
@@ -11,10 +12,21 @@ export default function Messages() {
   const [loading, setLoading]             = useState(true)
   const [sending, setSending]             = useState(false)
   const bottomRef = useRef(null)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     getConversations()
-      .then(res => setConversations(res.data.data ?? res.data))
+      .then(res => {
+        const convs = res.data.data ?? res.data
+        setConversations(convs)
+        // Si on vient de "Contacter le vendeur" avec ?to=id&name=nom
+        const toId   = searchParams.get('to')
+        const toName = searchParams.get('name')
+        if (toId) {
+          const existing = convs.find(c => String(c.other_user?.id ?? c.id) === toId)
+          setSelectedUser(existing?.other_user ?? existing ?? { id: Number(toId), name: toName ?? 'Vendeur' })
+        }
+      })
       .finally(() => setLoading(false))
   }, [])
 

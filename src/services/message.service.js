@@ -1,10 +1,10 @@
 import api from './api'
 
 export const getConversations = () =>
-  api.get('/messages')
+  api.get('/messages/conversations')
 
 export const getMessages = (userId) =>
-  api.get(`/messages/${userId}`)
+  api.get(`/messages/with/${userId}`)
 
 export const sendMessage = (receiverId, content) =>
-  api.post('/messages', { receiver_id: receiverId, content })
+  api.post('/messages', { recipient_id: receiverId, content })

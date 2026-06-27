@@ -15,6 +15,7 @@ import Forbidden     from './components/Forbidden';
 import CategoryList  from './pages/CategoryList';
 
 // Pages privées buyer
+import Cart        from './pages/Cart';
 import Orders      from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Favorites   from './pages/Favorites';
@@ -56,6 +57,9 @@ export default function App() {
               {/* Prive */}
               <Route path='/profile' element={
                 <PrivateRoute><Profile /></PrivateRoute>
+              } />
+              <Route path='/cart' element={
+                <PrivateRoute><Cart /></PrivateRoute>
               } />
               <Route path='/orders' element={
                 <PrivateRoute><Orders /></PrivateRoute>
