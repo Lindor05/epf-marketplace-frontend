@@ -78,9 +78,23 @@ export default function SellerOrders() {
               <p className='text-sm text-gray-500'>
                 Client : {order.buyer?.name ?? order.user?.name ?? '—'}
               </p>
-              <p className='text-sm font-semibold text-indigo-600'>
-                Total : {order.total_amount ?? order.total} FCFA
-              </p>
+              {parseFloat(order.discount_amount) > 0 ? (
+                <div className='text-sm flex items-center gap-2 flex-wrap'>
+                  <span className='text-gray-400 line-through'>
+                    {order.subtotal_before_discount} FCFA
+                  </span>
+                  <span className='text-green-600 text-xs bg-green-50 px-1.5 py-0.5 rounded'>
+                    -{order.discount_amount} FCFA
+                  </span>
+                  <span className='font-semibold text-indigo-600'>
+                    {order.total_amount} FCFA
+                  </span>
+                </div>
+              ) : (
+                <p className='text-sm font-semibold text-indigo-600'>
+                  Total : {order.total_amount} FCFA
+                </p>
+              )}
               <p className='text-xs text-gray-400 mt-1'>
                 {new Date(order.created_at).toLocaleDateString('fr-FR')}
               </p>

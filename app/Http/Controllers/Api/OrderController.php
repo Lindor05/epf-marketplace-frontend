@@ -188,7 +188,14 @@ class OrderController extends Controller
 
         $paginator->through(function (Order $order) use ($sellerId) {
             $items = $order->items->filter(fn (OrderItem $i) => (int) $i->seller_id === (int) $sellerId);
-            $total = $items->sum(fn (OrderItem $i) => (float) $i->subtotal);
+            $subtotal = $items->sum(fn (OrderItem $i) => (float) $i->subtotal);
+
+            // Répartir la remise coupon proportionnellement aux items du vendeur
+            $orderSubtotal = (float) ($order->total_amount + $order->discount_amount);
+            $discount = $orderSubtotal > 0
+                ? round((float) $order->discount_amount * ($subtotal / $orderSubtotal), 2)
+                : 0;
+            $finalTotal = $subtotal - $discount;
 
             return [
                 'id' => $order->id,
@@ -203,7 +210,9 @@ class OrderController extends Controller
                     'quantity' => $i->quantity,
                     'status' => $i->status,
                 ]),
-                'total_amount' => number_format($total, 2, '.', ''),
+                'subtotal_before_discount' => number_format($subtotal, 2, '.', ''),
+                'discount_amount' => number_format($discount, 2, '.', ''),
+                'total_amount' => number_format($finalTotal, 2, '.', ''),
                 'status' => $order->status,
                 'created_at' => $order->created_at?->toIso8601String(),
             ];
