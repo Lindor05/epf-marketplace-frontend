@@ -37,9 +37,9 @@ return (
 
         <div>
         <label className='block text-sm font-medium'>Nom du produit</label>
-        <input {...register('name', { required: 'Obligatoire' })}
+        <input {...register('title', { required: 'Obligatoire' })}
             className={f} placeholder='Nom du produit' />
-            {errors.name && <p className='text-red-500 text-xs mt-1'>{errors.name.message}</p>}
+            {errors.title && <p className='text-red-500 text-xs mt-1'>{errors.title.message}</p>}
         </div>
 
         <div>
@@ -60,9 +60,9 @@ return (
             </div>
             <div>
             <label className='block text-sm font-medium'>Stock</label>
-            <input {...register('stock', { required: 'Obligatoire', min: 0 })}
+            <input {...register('quantity', { required: 'Obligatoire', min: 0 })}
                 type='number' className={f} />
-            {errors.stock && <p className='text-red-500 text-xs mt-1'>{errors.stock.message}</p>}
+            {errors.quantity && <p className='text-red-500 text-xs mt-1'>{errors.quantity.message}</p>}
             </div>
         </div>
 

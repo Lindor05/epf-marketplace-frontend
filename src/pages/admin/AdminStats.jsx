@@ -17,10 +17,10 @@ useEffect(() => {
     if (loading) return <div className='text-center py-12 text-gray-400'>Chargement...</div>;
 
     const KPI = [
-    { label: 'Utilisateurs',    value: stats?.total_users    ?? '-' },
-    { label: 'Produits',        value: stats?.total_products ?? '-' },
-    { label: 'Commandes',       value: stats?.total_orders   ?? '-' },
-    { label: 'Revenus totaux',  value: stats?.total_revenue  ? `${stats.total_revenue} FCFA` : '-' },
+    { label: 'Utilisateurs',    value: stats?.users_count    ?? '-' },
+    { label: 'Produits',        value: stats?.products_count ?? '-' },
+    { label: 'Commandes',       value: stats?.orders_count   ?? '-' },
+    { label: 'Revenus totaux',  value: stats?.total_revenue != null ? `${stats.total_revenue} FCFA` : '-' },
     ];
 
     return (

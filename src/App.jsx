@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute  from './components/AdminRoute';
+import Navbar      from './components/Navbar';
 
 // Pages publiques
 import Home          from './pages/Home';
@@ -32,6 +33,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Toaster position='top-right' />
+        <Navbar />
         <Routes>
 
           {/* Public */}

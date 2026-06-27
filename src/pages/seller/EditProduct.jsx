@@ -50,7 +50,7 @@ return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>
         <label className='block text-sm font-medium'>Nom</label>
-        <input {...register('name')} className={f} />
+        <input {...register('title')} className={f} />
         </div>
         <div>
         <label className='block text-sm font-medium'>Description</label>
@@ -63,7 +63,7 @@ return (
         </div>
         <div>
             <label className='block text-sm font-medium'>Stock</label>
-            <input {...register('stock')} type='number' className={f} />
+            <input {...register('quantity')} type='number' className={f} />
         </div>
         </div>
         <div>
