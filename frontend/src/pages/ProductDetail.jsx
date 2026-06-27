@@ -106,16 +106,18 @@ export default function ProductDetail() {
           )}
 
           <div className="flex gap-3 pt-2">
-            <button
-              disabled={!inStock}
-              onClick={() => {
-                addToCart(product)
-                toast.success('Produit ajouté au panier !')
-              }}
-              className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Ajouter au panier
-            </button>
+            {user?.role !== 'seller' && user?.role !== 'admin' && (
+              <button
+                disabled={!inStock}
+                onClick={() => {
+                  addToCart(product)
+                  toast.success('Produit ajouté au panier !')
+                }}
+                className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Ajouter au panier
+              </button>
+            )}
 
             {user?.role === 'buyer' && (
               <>
