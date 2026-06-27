@@ -36,7 +36,10 @@ export default function Messages() {
   useEffect(() => {
     if (!selectedUser) return
     getMessages(selectedUser.id)
-      .then(res => setMessages(res.data.data ?? res.data))
+      .then(res => {
+        const msgs = res.data.data ?? res.data
+        setMessages([...msgs].reverse())
+      })
       .catch(() => setMessages([]))
   }, [selectedUser])
 
