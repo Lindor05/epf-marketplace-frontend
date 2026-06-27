@@ -78,22 +78,36 @@ return (
                 className={f} placeholder='PROMO20' />
             </div>
             <div>
-            <label className='block text-sm font-medium'>Reduction (%)</label>
-            <input {...register('discount', { required: true })}
-                type='number' min={1} max={100} className={f} />
+            <label className='block text-sm font-medium'>Type</label>
+            <select {...register('type', { required: true })} className={f}>
+                <option value='percent'>Pourcentage (%)</option>
+                <option value='fixed'>Montant fixe (FCFA)</option>
+            </select>
             </div>
         </div>
         <div className='grid grid-cols-2 gap-4'>
             <div>
-            <label className='block text-sm font-medium'>Date d expiration</label>
-            <input {...register('expires_at')} type='date' className={f} />
+            <label className='block text-sm font-medium'>Valeur</label>
+            <input {...register('value', { required: true })}
+                type='number' min={1} className={f} placeholder='ex : 20' />
             </div>
             <div>
             <label className='block text-sm font-medium'>Limite utilisation</label>
             <input {...register('usage_limit')} type='number' min={1}
                 className={f} placeholder='ex : 100' />
             </div>
+        </div>
+        <div className='grid grid-cols-2 gap-4'>
+            <div>
+            <label className='block text-sm font-medium'>Date d expiration</label>
+            <input {...register('ends_at')} type='date' className={f} />
             </div>
+            <div>
+            <label className='block text-sm font-medium'>Commande minimum (FCFA)</label>
+            <input {...register('min_order_total')} type='number' min={0}
+                className={f} placeholder='optionnel' />
+            </div>
+        </div>
         <button type='submit'
             className='bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition'>
             {editingId ? 'Mettre a jour' : 'Creer'}

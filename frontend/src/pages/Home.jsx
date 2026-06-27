@@ -1,24 +1,186 @@
-// Stub - sera remplace par la page catalogue de Luce
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { getProducts, searchProducts } from '../services/product.service'
+import { getCategories } from '../services/category.service'
+import Spinner from '../components/Spinner'
+import Skeleton from '../components/Skeleton'
+import toast from 'react-hot-toast'
 
 export default function Home() {
-  const { user } = useAuth();
+  const [products, setProducts]     = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [search, setSearch]         = useState('')
+  const [filters, setFilters]       = useState({
+    category_id: '',
+    min_price: '',
+    max_price: '',
+    sort: '',
+    page: 1,
+  })
+  const [lastPage, setLastPage] = useState(1)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    getCategories()
+      .then(res => setCategories(res.data))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    const params = Object.fromEntries(
+      Object.entries(filters).filter(([, v]) => v !== '')
+    )
+    getProducts(params)
+      .then(res => {
+        setProducts(res.data.data ?? res.data)
+        setLastPage(res.data.last_page ?? 1)
+      })
+      .finally(() => setLoading(false))
+  }, [filters])
+
+    const handleSearch = (e) => {
+      e.preventDefault()
+      if (!search.trim()) return
+      setLoading(true)
+      searchProducts(search)
+        .then(res => {
+          const results = res.data.data ?? res.data
+          setProducts(results)
+          if (results.length === 0) toast('Aucun résultat trouvé', { icon: '🔍' })
+        })
+        .catch(() => toast.error('Erreur lors de la recherche'))
+        .finally(() => setLoading(false))
+    }
+
+  const handleReset = () => {
+    setSearch('')
+    setFilters({ category_id: '', min_price: '', max_price: '', sort: '', page: 1 })
+  }
+
   return (
-    <div className='min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-6'>
-      <h1 className='text-3xl font-bold text-indigo-600'>EPF Marketplace</h1>
-      <p className='text-gray-500'>Bienvenue {user?.name || ''}</p>
-      <div className='flex gap-4'>
-        {!user && (
-          <>
-            <Link to='/login' className='bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700'>Se connecter</Link>
-            <Link to='/register' className='border border-indigo-600 text-indigo-600 px-5 py-2 rounded-lg hover:bg-indigo-50'>S'inscrire</Link>
-          </>
+    <div>
+      {/* Barre de recherche */}
+      <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Rechercher un produit..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+          Rechercher
+        </button>
+        {search && (
+          <button type="button" onClick={handleReset} className="text-gray-500 hover:text-gray-700 px-2">
+            Réinitialiser
+          </button>
         )}
-        {user?.role === 'seller' && <Link to='/seller' className='bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700'>Dashboard Vendeur</Link>}
-        {user?.role === 'admin' && <Link to='/admin' className='bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700'>Dashboard Admin</Link>}
-        {user && <Link to='/profile' className='border border-gray-300 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-100'>Mon profil</Link>}
+      </form>
+
+      {/* Filtres */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <select
+          value={filters.category_id}
+          onChange={e => setFilters(f => ({ ...f, category_id: e.target.value, page: 1 }))}
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        >
+          <option value="">Toutes les catégories</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <input
+          type="number"
+          placeholder="Prix min"
+          value={filters.min_price}
+          onChange={e => setFilters(f => ({ ...f, min_price: e.target.value, page: 1 }))}
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-28"
+        />
+
+        <input
+          type="number"
+          placeholder="Prix max"
+          value={filters.max_price}
+          onChange={e => setFilters(f => ({ ...f, max_price: e.target.value, page: 1 }))}
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-28"
+        />
+
+        <select
+          value={filters.sort}
+          onChange={e => setFilters(f => ({ ...f, sort: e.target.value, page: 1 }))}
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        >
+          <option value="">Trier par</option>
+          <option value="price_asc">Prix croissant</option>
+          <option value="price_desc">Prix décroissant</option>
+          <option value="newest">Plus récents</option>
+        </select>
       </div>
+
+      {/* Grille produits */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="space-y-3">
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      ) : products.length === 0 ? (
+        <p className="text-center text-gray-400 py-20">Aucun produit trouvé.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map(product => (
+            <div
+              key={product.id}
+              onClick={() => navigate(`/products/${product.id}`)}
+              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition"
+            >
+              <img
+                src={product.image ?? 'https://placehold.co/400x250?text=No+image'}
+                alt={product.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 truncate">{product.name}</h3>
+                <p className="text-indigo-600 font-bold mt-1">{product.price} €</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {product.stock > 0 ? `${product.stock} en stock` : 'Rupture de stock'}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {lastPage > 1 && (
+        <div className="flex justify-center gap-2 mt-8">
+          <button
+            disabled={filters.page === 1}
+            onClick={() => setFilters(f => ({ ...f, page: f.page - 1 }))}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-sm disabled:opacity-40 hover:bg-gray-50"
+          >
+            Précédent
+          </button>
+          <span className="px-4 py-2 text-sm text-gray-600">
+            Page {filters.page} / {lastPage}
+          </span>
+          <button
+            disabled={filters.page === lastPage}
+            onClick={() => setFilters(f => ({ ...f, page: f.page + 1 }))}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-sm disabled:opacity-40 hover:bg-gray-50"
+          >
+            Suivant
+          </button>
+        </div>
+      )}
     </div>
-  );
+  )
 }

@@ -49,8 +49,8 @@ return (
         <p><span className='font-medium'>Ville :</span> {user?.city || '-'}</p>
         <p><span className='font-medium'>Bio :</span> {user?.bio  || '-'}</p>
         <p><span className='font-medium'>Role :</span> {user?.role}</p>
-        {user?.avatar && (
-            <img src={user.avatar} alt='avatar'
+        {user?.profile_image && (
+            <img src={user.profile_image} alt='avatar'
             className='w-20 h-20 rounded-full object-cover mt-2' />
         )}
         </div>

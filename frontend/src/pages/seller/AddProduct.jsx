@@ -9,6 +9,7 @@ export default function AddProduct() {
 const { register, handleSubmit, formState: { errors } } = useForm();
 const navigate = useNavigate();
 const [categories, setCategories] = useState([]);
+const [mainImage, setMainImage]   = useState(null);
 const [images, setImages]         = useState([]);
 
 useEffect(() => {
@@ -21,6 +22,7 @@ const onSubmit = async (data) => {
     Object.entries(data).forEach(([k, v]) => {
         if (v !== '' && v != null) fd.append(k, v);
     });
+    if (mainImage) fd.append('image', mainImage);
     images.forEach(img => fd.append('images[]', img));
     await createProduct(fd);
     toast.success('Produit cree !');
@@ -37,9 +39,9 @@ return (
 
         <div>
         <label className='block text-sm font-medium'>Nom du produit</label>
-        <input {...register('name', { required: 'Obligatoire' })}
+        <input {...register('title', { required: 'Obligatoire' })}
             className={f} placeholder='Nom du produit' />
-            {errors.name && <p className='text-red-500 text-xs mt-1'>{errors.name.message}</p>}
+            {errors.title && <p className='text-red-500 text-xs mt-1'>{errors.title.message}</p>}
         </div>
 
         <div>
@@ -60,9 +62,9 @@ return (
             </div>
             <div>
             <label className='block text-sm font-medium'>Stock</label>
-            <input {...register('stock', { required: 'Obligatoire', min: 0 })}
+            <input {...register('quantity', { required: 'Obligatoire', min: 0 })}
                 type='number' className={f} />
-            {errors.stock && <p className='text-red-500 text-xs mt-1'>{errors.stock.message}</p>}
+            {errors.quantity && <p className='text-red-500 text-xs mt-1'>{errors.quantity.message}</p>}
             </div>
         </div>
 
@@ -89,7 +91,14 @@ return (
         </div>
 
         <div>
-            <label className='block text-sm font-medium'>Images</label>
+            <label className='block text-sm font-medium'>Image principale <span className='text-red-500'>*</span></label>
+            <input type='file' accept='image/*'
+            onChange={e => setMainImage(e.target.files[0] ?? null)}
+            className='mt-1 w-full' required />
+        </div>
+
+        <div>
+            <label className='block text-sm font-medium'>Images supplémentaires (optionnel)</label>
             <input type='file' multiple accept='image/*'
             onChange={e => setImages(Array.from(e.target.files))}
             className='mt-1 w-full' />

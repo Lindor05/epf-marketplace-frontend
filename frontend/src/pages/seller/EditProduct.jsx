@@ -16,7 +16,14 @@ const [loading, setLoading]       = useState(true);
 useEffect(() => {
     Promise.all([getProduct(id), api.get('/categories')])
     .then(([prodRes, catRes]) => {
-        reset(prodRes.data);
+        const p = prodRes.data;
+        reset({
+          title:       p.title,
+          description: p.description,
+          price:       p.price,
+          quantity:    p.quantity,
+          category_id: p.category_id ?? p.category?.id,
+        });
         setCategories(catRes.data.data || catRes.data);
         setLoading(false);
     })
@@ -37,7 +44,12 @@ const onSubmit = async (data) => {
     await updateProduct(id, fd);
     toast.success('Produit mis a jour !');
     navigate('/seller/products');
-    } catch { toast.error('Erreur lors de la mise a jour.'); }
+    } catch (err) {
+      const msg = err.response?.data?.message ?? err.response?.data?.error ?? 'Erreur lors de la mise a jour.';
+      const detail = err.response?.data?.errors ? '\n' + JSON.stringify(err.response.data.errors) : '';
+      console.error('updateProduct error', err.response?.status, err.response?.data);
+      toast.error(msg + detail);
+    }
 };
 
 const f = 'mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500';
@@ -50,7 +62,7 @@ return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>
         <label className='block text-sm font-medium'>Nom</label>
-        <input {...register('name')} className={f} />
+        <input {...register('title')} className={f} />
         </div>
         <div>
         <label className='block text-sm font-medium'>Description</label>
@@ -63,7 +75,7 @@ return (
         </div>
         <div>
             <label className='block text-sm font-medium'>Stock</label>
-            <input {...register('stock')} type='number' className={f} />
+            <input {...register('quantity')} type='number' className={f} />
         </div>
         </div>
         <div>
