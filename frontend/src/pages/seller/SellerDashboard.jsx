@@ -7,23 +7,23 @@ import toast from 'react-hot-toast';
 export default function SellerDashboard() {
 const { user } = useAuth();
 const [dashboard, setDashboard] = useState(null);
-const [stats, setStats]         = useState(null);
 const [loading, setLoading]     = useState(true);
 
 useEffect(() => {
     Promise.all([getDashboard(), getStatistics()])
-    .then(([dRes, sRes]) => { setDashboard(dRes.data); setStats(sRes.data); })
+    .then(([dRes]) => { setDashboard(dRes.data); })
     .catch(()  => toast.error('Erreur de chargement.'))
     .finally(() => setLoading(false));
 }, []);
 
 if (loading) return <div className='text-center py-12 text-gray-400'>Chargement...</div>;
 
+const revenue = dashboard?.total_revenue ?? dashboard?.total_sales
 const KPI = [
-    { label: 'Produits',       value: dashboard?.total_products ?? '-' },
-    { label: 'Commandes',      value: dashboard?.total_orders   ?? '-' },
-    { label: 'Revenus',        value: (dashboard?.total_revenue ?? dashboard?.total_sales) ? `${dashboard.total_revenue ?? dashboard.total_sales} FCFA` : '-' },
-    { label: 'Ventes ce mois', value: dashboard?.monthly_sales?.length ?? stats?.monthly_sales ?? '-' },
+    { label: 'Produits',          value: dashboard?.total_products ?? '-' },
+    { label: 'Commandes totales', value: dashboard?.total_orders   ?? '-' },
+    { label: 'En attente',        value: dashboard?.pending_orders ?? '-' },
+    { label: 'Chiffre d\'affaires', value: revenue != null ? `${Number(revenue).toFixed(0)} FCFA` : '-' },
 ];
 
 return (
