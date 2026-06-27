@@ -18,7 +18,10 @@ useEffect(() => {
     .then(([prodRes, catRes]) => {
         const p = prodRes.data;
         reset({
-          ...p,
+          title:       p.title,
+          description: p.description,
+          price:       p.price,
+          quantity:    p.quantity,
           category_id: p.category_id ?? p.category?.id,
         });
         setCategories(catRes.data.data || catRes.data);
@@ -41,7 +44,12 @@ const onSubmit = async (data) => {
     await updateProduct(id, fd);
     toast.success('Produit mis a jour !');
     navigate('/seller/products');
-    } catch { toast.error('Erreur lors de la mise a jour.'); }
+    } catch (err) {
+      const msg = err.response?.data?.message ?? err.response?.data?.error ?? 'Erreur lors de la mise a jour.';
+      const detail = err.response?.data?.errors ? '\n' + JSON.stringify(err.response.data.errors) : '';
+      console.error('updateProduct error', err.response?.status, err.response?.data);
+      toast.error(msg + detail);
+    }
 };
 
 const f = 'mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500';
