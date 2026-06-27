@@ -9,6 +9,7 @@ use App\Support\PublicStorage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -85,10 +86,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(Request $request, Product $product): JsonResponse
     {
         if ($product->status !== 'published') {
-            abort(404);
+            // allow the owner to view their own draft/inactive products
+            if ($request->user('sanctum')?->id !== $product->user_id) {
+                abort(404);
+            }
         }
 
         $product->increment('views');
