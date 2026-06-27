@@ -16,7 +16,11 @@ const [loading, setLoading]       = useState(true);
 useEffect(() => {
     Promise.all([getProduct(id), api.get('/categories')])
     .then(([prodRes, catRes]) => {
-        reset(prodRes.data);
+        const p = prodRes.data;
+        reset({
+          ...p,
+          category_id: p.category_id ?? p.category?.id,
+        });
         setCategories(catRes.data.data || catRes.data);
         setLoading(false);
     })
