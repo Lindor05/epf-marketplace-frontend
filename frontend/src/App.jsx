@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
-import PrivateRoute from './components/PrivateRoute';
-import AdminRoute  from './components/AdminRoute';
+import PrivateRoute  from './components/PrivateRoute';
+import AdminRoute   from './components/AdminRoute';
+import SellerRoute  from './components/SellerRoute';
 import Layout from './components/Layout';
 
 // Pages publiques
@@ -76,22 +77,22 @@ export default function App() {
 
               {/* Seller */}
               <Route path='/seller' element={
-                <PrivateRoute><SellerDashboard /></PrivateRoute>
+                <SellerRoute><SellerDashboard /></SellerRoute>
               } />
               <Route path='/seller/products' element={
-                <PrivateRoute><MyProducts /></PrivateRoute>
+                <SellerRoute><MyProducts /></SellerRoute>
               } />
               <Route path='/seller/products/new' element={
-                <PrivateRoute><AddProduct /></PrivateRoute>
+                <SellerRoute><AddProduct /></SellerRoute>
               } />
               <Route path='/seller/products/:id/edit' element={
-                <PrivateRoute><EditProduct /></PrivateRoute>
+                <SellerRoute><EditProduct /></SellerRoute>
               } />
               <Route path='/seller/orders' element={
-                <PrivateRoute><SellerOrders /></PrivateRoute>
+                <SellerRoute><SellerOrders /></SellerRoute>
               } />
               <Route path='/seller/dashboard' element={
-                <PrivateRoute><SellerDashboard /></PrivateRoute>
+                <SellerRoute><SellerDashboard /></SellerRoute>
               } />
 
               {/* Admin */}

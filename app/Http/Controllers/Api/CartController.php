@@ -66,6 +66,10 @@ class CartController extends Controller
             abort(422, __('Produit indisponible.'));
         }
 
+        if ($product->user_id === $request->user()->id) {
+            abort(403, __('Vous ne pouvez pas commander votre propre produit.'));
+        }
+
         if ($qty > $product->quantity) {
             abort(422, __('Stock insuffisant.'));
         }

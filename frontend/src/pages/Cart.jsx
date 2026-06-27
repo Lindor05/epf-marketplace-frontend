@@ -90,8 +90,10 @@ export default function Cart() {
               >−</button>
               <span className="w-8 text-center font-medium">{item.quantity}</span>
               <button
+                disabled={item.quantity >= (item._stock ?? Infinity)}
                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                title={item.quantity >= (item._stock ?? Infinity) ? 'Stock maximum atteint' : ''}
               >+</button>
             </div>
 
