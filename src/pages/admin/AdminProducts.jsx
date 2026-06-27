@@ -55,7 +55,7 @@ return (
             className='flex items-center justify-between p-4 bg-white
                 rounded-xl shadow-sm border'>
             <div>
-                <p className='font-semibold text-gray-800'>{p.name}</p>
+                <p className='font-semibold text-gray-800'>{p.title ?? p.name}</p>
                 <p className='text-sm text-gray-500'>
                 Vendeur : {p.seller?.name} - {p.price} FCFA
                 </p>

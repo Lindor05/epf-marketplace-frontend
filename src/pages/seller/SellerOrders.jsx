@@ -51,7 +51,7 @@ return (
                 {order.items.map(item => (
                     <div key={item.id}
                     className='text-xs text-gray-600 flex justify-between'>
-                    <span>{item.product?.name} x{item.quantity}</span>
+                    <span>{item.product?.title ?? item.product?.name} x{item.quantity}</span>
                       <span>{item.price * item.quantity} FCFA</span>
                     </div>
                 ))}
