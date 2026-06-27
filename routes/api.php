@@ -90,6 +90,7 @@ Route::middleware(['auth:sanctum', 'not_suspended', 'admin'])->prefix('admin')->
     Route::post('users/{user}/suspend', [AdminUserController::class, 'suspend']);
     Route::post('users/{user}/activate', [AdminUserController::class, 'activate']);
 
+    Route::get('products', [AdminProductController::class, 'index']);
     Route::patch('products/{id}/status', [AdminProductController::class, 'updateStatus']);
     Route::delete('products/{id}/force', [AdminProductController::class, 'destroy']);
 

@@ -9,7 +9,7 @@ export const suspendUser      = (id)        => api.post(`/admin/users/${id}/susp
 export const reactivateUser   = (id)        => api.post(`/admin/users/${id}/activate`);
 
 // Produits (moderation)
-export const getAllProducts    = (params)    => api.get('/products', { params });
+export const getAllProducts    = (params)    => api.get('/admin/products', { params });
 export const forceProductStatus = (id, s)  => api.patch(`/admin/products/${id}/status`, { status: s });
 export const forceDeleteProduct = (id)     => api.delete(`/admin/products/${id}/force`);
 

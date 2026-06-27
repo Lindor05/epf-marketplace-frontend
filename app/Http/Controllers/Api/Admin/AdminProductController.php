@@ -11,6 +11,24 @@ use Illuminate\Validation\Rule;
 
 class AdminProductController extends Controller
 {
+    public function index(Request $request): JsonResponse
+    {
+        $products = Product::with('seller:id,name')
+            ->when($request->status, fn($q, $s) => $q->where('status', $s))
+            ->latest()
+            ->paginate(50);
+
+        return response()->json([
+            'data' => $products->map(fn($p) => [
+                'id'     => $p->id,
+                'title'  => $p->title,
+                'price'  => $p->price,
+                'status' => $p->status,
+                'seller' => $p->seller ? ['id' => $p->seller->id, 'name' => $p->seller->name] : null,
+            ]),
+        ]);
+    }
+
     public function updateStatus(Request $request, int $id): JsonResponse
     {
         $product = Product::query()->withTrashed()->findOrFail($id);
