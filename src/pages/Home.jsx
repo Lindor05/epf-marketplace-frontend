@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getProducts, searchProducts } from '../services/product.service'
 import { getCategories } from '../services/category.service'
-import Spinner from '../components/Spinner'
 import Skeleton from '../components/Skeleton'
 import toast from 'react-hot-toast'
 
@@ -40,19 +39,20 @@ export default function Home() {
       .finally(() => setLoading(false))
   }, [filters])
 
-    const handleSearch = (e) => {
-      e.preventDefault()
-      if (!search.trim()) return
-      setLoading(true)
-      searchProducts(search)
-        .then(res => {
-          const results = res.data.data ?? res.data
-          setProducts(results)
-          if (results.length === 0) toast('Aucun résultat trouvé', { icon: '🔍' })
-        })
-        .catch(() => toast.error('Erreur lors de la recherche'))
-        .finally(() => setLoading(false))
-    }
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (!search.trim()) return
+    setLoading(true)
+    searchProducts(search)
+      .then(res => {
+        // L'API renvoie { products: [...], sellers: [], categories: [] }
+        const results = res.data.products ?? res.data.data ?? res.data
+        setProducts(Array.isArray(results) ? results : [])
+        if (!results?.length) toast('Aucun résultat trouvé', { icon: '🔍' })
+      })
+      .catch(() => toast.error('Erreur lors de la recherche'))
+      .finally(() => setLoading(false))
+  }
 
   const handleReset = () => {
     setSearch('')
@@ -115,8 +115,9 @@ export default function Home() {
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
         >
           <option value="">Trier par</option>
-          <option value="price_asc">Prix croissant</option>
-          <option value="price_desc">Prix décroissant</option>
+          <option value="cheapest">Prix croissant</option>
+          <option value="popular">Plus vendus</option>
+          <option value="most_rated">Mieux notés</option>
           <option value="newest">Plus récents</option>
         </select>
       </div>
@@ -144,15 +145,24 @@ export default function Home() {
             >
               <img
                 src={product.image ?? 'https://placehold.co/400x250?text=No+image'}
-                alt={product.name}
+                alt={product.title ?? product.name}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
-                <h3 className="font-semibold text-gray-800 truncate">{product.name}</h3>
-                <p className="text-indigo-600 font-bold mt-1">{product.price} €</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {product.stock > 0 ? `${product.stock} en stock` : 'Rupture de stock'}
+                <h3 className="font-semibold text-gray-800 truncate">
+                  {product.title ?? product.name}
+                </h3>
+                <p className="text-indigo-600 font-bold mt-1">
+                  {product.effective_price ?? product.price} FCFA
                 </p>
+                {product.status === 'sold' && (
+                  <p className="text-xs text-red-400 mt-1">Rupture de stock</p>
+                )}
+                {product.seller && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Vendeur : {product.seller.name}
+                  </p>
+                )}
               </div>
             </div>
           ))}

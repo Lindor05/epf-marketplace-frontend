@@ -13,25 +13,27 @@ export function CartProvider({ children }) {
   }, [cart])
 
   const addToCart = (product, quantity = 1) => {
+    const stock = product.quantity ?? product.stock ?? Infinity
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id)
       if (existing) {
+        const newQty = Math.min(existing.quantity + quantity, existing._stock ?? Infinity)
         return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+          item.id === product.id ? { ...item, quantity: newQty } : item
         )
       }
-      return [...prev, { ...product, quantity }]
+      return [...prev, { ...product, quantity: Math.min(quantity, stock), _stock: stock }]
     })
   }
 
   const updateQuantity = (productId, quantity) => {
     if (quantity <= 0) return removeFromCart(productId)
     setCart(prev =>
-      prev.map(item =>
-        item.id === productId ? { ...item, quantity } : item
-      )
+      prev.map(item => {
+        if (item.id !== productId) return item
+        const maxQty = item._stock ?? Infinity
+        return { ...item, quantity: Math.min(quantity, maxQty) }
+      })
     )
   }
 

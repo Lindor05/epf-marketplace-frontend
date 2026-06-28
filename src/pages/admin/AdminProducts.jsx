@@ -3,7 +3,7 @@ import { getAllProducts, forceProductStatus, forceDeleteProduct }
 from '../../services/admin.service';
 import toast from 'react-hot-toast';
 
-const STATUS_OPTIONS = ['draft', 'published', 'sold'];
+const STATUS_OPTIONS = ['draft', 'published', 'sold', 'inactive'];
 const statusClass = s => ({
 published: 'bg-green-100 text-green-700',
 draft:     'bg-yellow-100 text-yellow-700',

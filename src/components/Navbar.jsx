@@ -23,6 +23,7 @@ export default function Navbar() {
     { to: '/',                  label: 'Produits' },
     { to: '/seller/products',   label: 'Mes produits' },
     { to: '/seller/orders',     label: 'Commandes reçues' },
+    { to: '/messages',          label: 'Messages' },
     { to: '/seller/dashboard',  label: 'Dashboard' },
   ] : user?.role === 'admin' ? [
     { to: '/admin/stats',    label: 'Stats' },
